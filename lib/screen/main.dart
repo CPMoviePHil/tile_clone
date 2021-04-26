@@ -46,6 +46,9 @@ class _MainPage extends State<MainPage> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Bluetooth'),
+      ),
       body: pages[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         unselectedItemColor: Colors.grey,

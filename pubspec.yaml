@@ -23,6 +23,12 @@ environment:
 dependencies:
   flutter_blue: ^0.8.0
   flutter_reactive_ble: ^3.0.0
+  flutter_bluetooth_serial:
+    git: https://github.com/BQN-UY/flutter_bluetooth_serial.git #別人的fork，有+了null-safety
+  flutter_bloc: ^7.0.0
+  bloc: ^7.0.0
+  equatable: ^2.0.0
+  flutter_slidable: ^0.6.0
   flutter:
     sdk: flutter
 
