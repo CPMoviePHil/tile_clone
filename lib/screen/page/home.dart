@@ -15,14 +15,6 @@ class _Home extends State<Home> {
 
   BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
 
-  String _address = "...";
-  String _name = "...";
-
-  Timer _discoverableTimeoutTimer;
-  int _discoverableTimeoutSecondsLeft = 0;
-
-  bool _autoAcceptPairingRequests = false;
-
   List<Widget> items = [];
 
   @override
@@ -37,47 +29,21 @@ class _Home extends State<Home> {
         routes: '',
       ),
     );
-    // Get current state
+
     FlutterBluetoothSerial.instance.state.then((state) {
       setState(() {
         _bluetoothState = state;
       });
     });
 
-    Future.doWhile(() async {
-      // Wait if adapter not enabled
-      if (await FlutterBluetoothSerial.instance.isEnabled) {
-        return false;
-      }
-      await Future.delayed(Duration(milliseconds: 900,));
-      return true;
-    }).then((_) {
-      // Update the address field
-      FlutterBluetoothSerial.instance.address.then((address) {
-        setState(() {
-          _address = address;
-        });
-      });
-    });
-
-    FlutterBluetoothSerial.instance.name.then((name) {
-      setState(() {
-        _name = name;
-      });
-    });
-
-    // Listen for further state changes
     FlutterBluetoothSerial.instance
         .onStateChanged()
         .listen((BluetoothState state) {
       setState(() {
         _bluetoothState = state;
-
-        // Discoverable mode is disabled when Bluetooth gets disabled
-        _discoverableTimeoutTimer = null;
-        _discoverableTimeoutSecondsLeft = 0;
       });
     });
+
   }
 
   @override
@@ -105,15 +71,15 @@ class _Home extends State<Home> {
             controlAffinity: ListTileControlAffinity.trailing,
             value: _bluetoothState.isEnabled,
             onChanged: (bool result) async {
-              future() async {
-                // async lambda seems to not working
-                if (result)
+              Future<void> blueAction() async {
+                if (result) {
                   await FlutterBluetoothSerial.instance.requestEnable();
-                else
+                }
+                else {
                   await FlutterBluetoothSerial.instance.requestDisable();
+                }
               }
-
-              future().then((_) {
+              blueAction().then((_) {
                 setState(() {});
               });
             },
