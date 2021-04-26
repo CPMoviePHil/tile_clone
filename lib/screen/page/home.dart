@@ -120,17 +120,34 @@ class _Home extends State<Home> {
             size: 50,
           ),
           GestureDetector(
+            behavior: HitTestBehavior.translucent,
             onTap: () async {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BleList(),
-                ),
-              ).then((value){
-                setState((){
+              if (_bluetoothState.isEnabled) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BleList(),
+                  ),
+                ).then((value){
+                  setState((){
 
+                  });
                 });
-              });
+              } else {
+                bool blueEnabled = await FlutterBluetoothSerial.instance.requestEnable();
+                if (blueEnabled) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BleList(),
+                    ),
+                  ).then((value){
+                    setState((){
+
+                    });
+                  });
+                }
+              }
             },
             child: Icon(
               Icons.add_sharp,

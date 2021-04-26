@@ -40,7 +40,9 @@ class _BleList extends State<BleList> {
               child: CircularProgressIndicator(),
             );
           }
-          print(snapshot.data);
+          if (!snapshot.data.scanStatus) {
+            print("scan error:${snapshot.data.error}");
+          }
           final BlueScanResult receivedResult = snapshot.data;
           return ListView.builder(
             itemBuilder: (BuildContext context, int index,) {
@@ -115,24 +117,6 @@ class _BleList extends State<BleList> {
                       },
                     ),
                   ],
-                  /*secondaryActions: <Widget>[
-                    IconSlideAction(
-                      caption: 'More',
-                      color: Colors.black45,
-                      icon: Icons.more_horiz,
-                      onTap: () {
-
-                      },
-                    ),
-                    IconSlideAction(
-                      caption: 'Delete',
-                      color: Colors.red,
-                      icon: Icons.delete,
-                      onTap: () {
-
-                      },
-                    ),
-                  ],*/
                 );
               } else {
                 return Container(

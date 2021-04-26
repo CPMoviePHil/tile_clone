@@ -2,17 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
-import 'package:flutter_blue/flutter_blue.dart' as fBlue;
 
 class BlueTooth {
 
-  static final StreamController<BlueScanResult> controllerFRBle = StreamController.broadcast();
+  static StreamController<BlueScanResult> controllerFRBle;
   Stream<BlueScanResult> get fRBleStream => controllerFRBle.stream;
-  static final StreamController<BlueScanResult> controllerBlue = StreamController.broadcast();
-  Stream<BlueScanResult> get blueStream => controllerBlue.stream;
+  StreamSubscription fBleSubscription;
 
   static final flutterReactiveBle = FlutterReactiveBle();
-  static final flutterBlue = fBlue.FlutterBlue.instance;
 
   static BlueTooth get instance => BlueTooth();
 
@@ -20,10 +17,13 @@ class BlueTooth {
   static List fBlueStack = [];
 
   startScan() {
-    flutterReactiveBle.scanForDevices(
+    controllerFRBle = StreamController();
+    fBleSubscription = flutterReactiveBle.scanForDevices(
       withServices: [],
       scanMode: ScanMode.lowLatency,
-    ).listen((device) {
+      requireLocationServicesEnabled: false,
+    ).listen((event) => event);
+    fBleSubscription.onData((device) {
       if (!stack.contains(device.id)) {
         stack.add(device.id);
         controllerFRBle.sink.add(
@@ -33,34 +33,21 @@ class BlueTooth {
           ),
         );
       }
-      //code for handling results
-    }, onError: (e) {
+    });
+
+    fBleSubscription.onError((error){
       controllerFRBle.sink.add(
         BlueScanResult(
           scanStatus: false,
-          error: '$e',
+          error: '$error',
         ),
       );
-    });
-    flutterBlue.startScan(timeout: Duration(seconds: 4));
-    flutterBlue.scanResults.listen((event) {
-      for (fBlue.ScanResult r in event) {
-        if (!fBlueStack.contains(r.device.id)) {
-          fBlueStack.add(r.device.id);
-          controllerBlue.sink.add(
-            BlueScanResult(
-              scanStatus: true,
-              deviceID: r.device.id.id,
-            ),
-          );
-        }
-      }
     });
   }
 
   stopScan() {
+    fBleSubscription.cancel();
     controllerFRBle.close();
-    controllerBlue.close();
   }
 
 }
