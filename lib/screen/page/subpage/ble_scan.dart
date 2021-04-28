@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tile_blue/bloc/dropdown/scan_dropdown_bloc.dart';
 import 'package:tile_blue/setting/blue_scan_setting.dart';
 import 'package:tile_blue/setting/prefs.dart';
 
@@ -27,6 +29,7 @@ class _Scan extends State<Scan> {
   ];
 
   DropdownButton chooseMenu({
+    @required Bloc bloc,
     @required String hintText,
     @required List options,
   }) {
@@ -38,7 +41,10 @@ class _Scan extends State<Scan> {
           child: Text("$value"),
         );
       },).toList(),
-      onChanged: (item) async => BlueScanSetting.mode = item ,
+      onChanged: (item) async {
+        BlueScanSetting.mode = item;
+        bloc.add(ScanDropdownChose(mode: item,));
+      },
     );
   }
 
@@ -50,7 +56,7 @@ class _Scan extends State<Scan> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    final scanDropdownBloc = BlocProvider.of<ScanDropdownBloc>(context);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
@@ -92,16 +98,28 @@ class _Scan extends State<Scan> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  chooseMenu(
-                    hintText: "Scan Mode",
-                    options: modes,
+                  BlocBuilder<ScanDropdownBloc, ScanDropdownState>(
+                    builder: (context, state) {
+                      String dropdownText;
+                      if (state is ScanDropdownInitial) {
+                        dropdownText = '掃描模式';
+                      }
+                      if (state is ScanDropdownItem) {
+                        dropdownText = state.mode.toString();
+                      }
+                      return chooseMenu(
+                        bloc: scanDropdownBloc,
+                        hintText: "$dropdownText",
+                        options: modes,
+                      );
+                    },
                   ),
                 ],
               ),
               TextField(
                 focusNode: minRssiFocusNode,
                 onChanged: (text) {
-                  if (text != '-') {
+                  if (text != '-' && text != '') {
                     BlueScanSetting.minRssi = int.parse(text);
                   }
                 },
@@ -119,7 +137,7 @@ class _Scan extends State<Scan> {
               TextField(
                 focusNode: maxRssiFocusNode,
                 onChanged: (text) {
-                  if (text != "-") {
+                  if (text != '-' && text != '') {
                     BlueScanSetting.maxRssi = int.tryParse(text);
                   }
                 },
