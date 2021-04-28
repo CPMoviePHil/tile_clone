@@ -1,4 +1,5 @@
-import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tile_blue/setting/blue_scan_setting.dart';
 
@@ -10,7 +11,33 @@ class Prefs {
     this.preferences,
   });
 
-  Future<String> saveSetting ({
+  Future<bool> saveBackEndDomain({
+    String domain,
+  }) async {
+    List<String> listOfDomains = getBackEndDomains();
+    if (listOfDomains.contains(domain)) {
+      return false;
+    } else {
+      listOfDomains.add(domain);
+    }
+    bool result = await preferences.setString(
+      "listOfDomains",
+      json.encode(listOfDomains),
+    );
+    return result;
+  }
+
+  List<String> getBackEndDomains() {
+    List<String> listOfDomains = [];
+    if (preferences.getString("listOfDomains") != null) {
+      listOfDomains = json.decode(
+        preferences.getString("listOfDomains"),
+      ).cast<String>();
+    }
+    return listOfDomains;
+  }
+
+  Future<String> saveScanSetting ({
     int mode,
     int maxRssi,
     int minRssi,
@@ -57,7 +84,7 @@ class Prefs {
     return errorString;
   }
 
-  void getSetting() {
+  void getScanSetting() {
     if (preferences.getInt("scanMode") != null) {
       BlueScanSetting.mode = preferences.getInt(
         "scanMode",

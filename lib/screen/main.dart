@@ -43,6 +43,36 @@ class _MainPage extends State<MainPage> {
     );
   }
 
+  Widget bottomSheetItem ({
+    String hintText,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pop(hintText);
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          vertical: 20,
+        ),
+        alignment: Alignment.center,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              "$hintText",
+              style: TextStyle(
+                color: Color.fromRGBO(
+                  123, 123, 123, 1,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -58,17 +88,66 @@ class _MainPage extends State<MainPage> {
                 'Bluetooth',
               ),
               GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Scan(),
+                onTap: () async {
+                  final String option1 = '藍芽搜尋設定';
+                  final String option2 = '其他設定';
+                  String result = await showModalBottomSheet<String>(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
-                  ).then((value){
-                    setState((){
-
+                    context: context,
+                    builder: ( BuildContext context ) {
+                      return Container(
+                        height: 150,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: const Radius.circular(20.0),
+                            topRight: const Radius.circular(20.0),
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            bottomSheetItem(hintText: "$option1",),
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Color.fromRGBO(
+                                      123, 123, 123, 1,
+                                    ),
+                                    width: 0.2,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            bottomSheetItem(hintText: "$option2",),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                  if (result == option1) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Scan(),
+                      ),
+                    ).then((value) {
+                      setState((){});
                     });
-                  });
+                  }
+                  if (result == option2) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Other(),
+                      ),
+                    ).then((value) {
+                      setState((){});
+                    });
+                  }
                 },
                 behavior: HitTestBehavior.translucent,
                 child: Icon(Icons.settings),

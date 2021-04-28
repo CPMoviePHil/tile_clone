@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,7 +43,7 @@ class _Scan extends State<Scan> {
       onChanged: (item) async {
         int itemIndex;
         BlueScanSetting.modes.map((e) {
-          if (e.scanModeText==item) {
+          if (e.scanModeText == item) {
             itemIndex = e.index;
           }
         }).toList();
@@ -98,7 +100,7 @@ class _Scan extends State<Scan> {
                     BlueScanSetting.maxRssi = null;
                   }
                   final prefs = Prefs(preferences: await SharedPreferences.getInstance(),);
-                  String responseError = await prefs.saveSetting(
+                  String responseError = await prefs.saveScanSetting(
                     mode: BlueScanSetting.mode ?? 0,
                     maxRssi: BlueScanSetting.maxRssi,
                     minRssi: BlueScanSetting.minRssi,
@@ -116,6 +118,7 @@ class _Scan extends State<Scan> {
                       msg: responseError,
                     );
                   }
+                  Future.delayed(Duration(seconds: 2,), () => Navigator.of(context).pop(),);
                 },
                 child: Text(
                   "確認",

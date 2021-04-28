@@ -17,7 +17,7 @@ class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
   ) async* {
     if (event is ApplicationInit) {
       final prefs = Prefs(preferences: await SharedPreferences.getInstance());
-      prefs.getSetting();
+      prefs.getScanSetting();
       yield ApplicationSettingDone();
     }
   }

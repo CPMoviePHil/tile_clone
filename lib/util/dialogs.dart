@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 class Dialogs {
 
+  static Timer timer;
+
   static Future<void> showLoadingDialog({
     BuildContext context,
     GlobalKey key,
@@ -45,21 +47,15 @@ class Dialogs {
     );
   }
 
-  static Future<bool> showMessageDialog({
+  static Future<void> showMessageDialog({
     @required bool success,
     @required BuildContext context,
     @required String msg,
-    Timer timer,
   }) async {
-    return await showDialog(
+    showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        timer = Timer(Duration(
-          milliseconds: 2500,
-        ), () {
-          timer.cancel();
-          Navigator.of(context).pop();
-        });
         return AlertDialog(
           content: Container(
             padding: EdgeInsets.symmetric(

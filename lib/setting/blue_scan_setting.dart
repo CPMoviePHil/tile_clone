@@ -11,6 +11,7 @@ class BlueScanSetting {
   static int maxRssi;
   static int minRssi;
   static String bleMac;
+  static String serverDomain;
 
   static final List<ScanModeItem> modes = [
     ScanModeItem(
