@@ -126,7 +126,7 @@ class _Home extends State<Home> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Scan(),
+                    builder: (context) => BleList(),
                   ),
                 ).then((value){
                   setState((){
@@ -139,7 +139,7 @@ class _Home extends State<Home> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Scan(),
+                      builder: (context) => BleList(),
                     ),
                   ).then((value){
                     setState((){

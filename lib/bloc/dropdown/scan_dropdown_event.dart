@@ -8,7 +8,7 @@ abstract class ScanDropdownEvent extends Equatable {
 }
 
 class ScanDropdownChose extends ScanDropdownEvent {
-  final ScanMode mode;
+  final int mode;
   const ScanDropdownChose({this.mode});
   @override
   // TODO: implement props

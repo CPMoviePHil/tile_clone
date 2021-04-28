@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tile_blue/bloc/dropdown/scan_dropdown_bloc.dart';
 import 'package:tile_blue/setting/blue_scan_setting.dart';
 import 'package:tile_blue/setting/prefs.dart';
+import 'package:tile_blue/util/export.dart';
 
 class Scan extends StatefulWidget{
   @override
@@ -15,35 +15,40 @@ class Scan extends StatefulWidget{
 
 class _Scan extends State<Scan> {
 
-  final minRssiController = TextEditingController();
+  final minRssiController = TextEditingController(
+    text: BlueScanSetting.minRssi==null?'':BlueScanSetting.minRssi.toString(),
+  );
   final minRssiFocusNode = FocusNode();
-  final maxRssiController = TextEditingController();
+  final maxRssiController = TextEditingController(
+    text: BlueScanSetting.maxRssi==null?'':BlueScanSetting.maxRssi.toString(),
+  );
   final maxRssiFocusNode = FocusNode();
   //final deviceMacController = TextEditingController();
-
-  List<ScanMode> modes = [
-    ScanMode.balanced,
-    ScanMode.lowPower,
-    ScanMode.lowLatency,
-    ScanMode.opportunistic,
-  ];
 
   DropdownButton chooseMenu({
     @required Bloc bloc,
     @required String hintText,
-    @required List options,
+    @required List<ScanModeItem> options,
   }) {
     return DropdownButton(
       hint: Text("${hintText??''}"),
       items: options.map((value) {
         return DropdownMenuItem(
-          value: value,
-          child: Text("$value"),
+          value: value.scanModeText,
+          child: Text("${value.scanModeText}"),
         );
       },).toList(),
       onChanged: (item) async {
-        BlueScanSetting.mode = item;
-        bloc.add(ScanDropdownChose(mode: item,));
+        int itemIndex;
+        BlueScanSetting.modes.map((e) {
+          if (e.scanModeText==item) {
+            itemIndex = e.index;
+          }
+        }).toList();
+        BlueScanSetting.mode = itemIndex;
+        bloc.add(
+          ScanDropdownChose(mode: itemIndex,),
+        );
       },
     );
   }
@@ -52,6 +57,11 @@ class _Scan extends State<Scan> {
   void initState() {
     // TODO: implement initState
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -74,12 +84,38 @@ class _Scan extends State<Scan> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  final prefs = Prefs(preferences: await SharedPreferences.getInstance());
-                  prefs.saveSetting(
-                    mode: BlueScanSetting.mode,
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  if (minRssiController.text != '-' && minRssiController.text != '') {
+                    BlueScanSetting.minRssi = int.tryParse(minRssiController.text);
+                  }
+                  if (minRssiController.text == '') {
+                    BlueScanSetting.minRssi = null;
+                  }
+                  if (maxRssiController.text != '-' && maxRssiController.text != '') {
+                    BlueScanSetting.maxRssi = int.tryParse(maxRssiController.text);
+                  }
+                  if (maxRssiController.text == '') {
+                    BlueScanSetting.maxRssi = null;
+                  }
+                  final prefs = Prefs(preferences: await SharedPreferences.getInstance(),);
+                  String responseError = await prefs.saveSetting(
+                    mode: BlueScanSetting.mode ?? 0,
                     maxRssi: BlueScanSetting.maxRssi,
                     minRssi: BlueScanSetting.minRssi,
                   );
+                  if (responseError == '') {
+                    Dialogs.showMessageDialog(
+                      success: true,
+                      context: context,
+                      msg: '設置成功',
+                    );
+                  } else {
+                    Dialogs.showMessageDialog(
+                      success: false,
+                      context: context,
+                      msg: responseError,
+                    );
+                  }
                 },
                 child: Text(
                   "確認",
@@ -102,15 +138,19 @@ class _Scan extends State<Scan> {
                     builder: (context, state) {
                       String dropdownText;
                       if (state is ScanDropdownInitial) {
-                        dropdownText = '掃描模式';
+                        if (BlueScanSetting.mode == null) {
+                          dropdownText = '掃描模式';
+                        } else {
+                          dropdownText = BlueScanSetting.modes[BlueScanSetting.mode].scanModeText;
+                        }
                       }
                       if (state is ScanDropdownItem) {
-                        dropdownText = state.mode.toString();
+                        dropdownText = BlueScanSetting.modes[state.mode].scanModeText;
                       }
                       return chooseMenu(
                         bloc: scanDropdownBloc,
                         hintText: "$dropdownText",
-                        options: modes,
+                        options: BlueScanSetting.modes,
                       );
                     },
                   ),
@@ -118,11 +158,6 @@ class _Scan extends State<Scan> {
               ),
               TextField(
                 focusNode: minRssiFocusNode,
-                onChanged: (text) {
-                  if (text != '-' && text != '') {
-                    BlueScanSetting.minRssi = int.parse(text);
-                  }
-                },
                 controller: minRssiController,
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.allow(RegExp(r'(^\-?\d*\.?\d*)'),),
@@ -136,11 +171,6 @@ class _Scan extends State<Scan> {
               ),
               TextField(
                 focusNode: maxRssiFocusNode,
-                onChanged: (text) {
-                  if (text != '-' && text != '') {
-                    BlueScanSetting.maxRssi = int.tryParse(text);
-                  }
-                },
                 controller: maxRssiController,
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.allow(RegExp(r'(^\-?\d*\.?\d*)'),),

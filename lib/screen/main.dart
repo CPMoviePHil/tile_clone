@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tile_blue/screen/page/export.dart';
 import 'package:tile_blue/widget/export.dart';
+import 'package:tile_blue/screen/page/subpage/export.dart';
 
 class MainPage extends StatefulWidget {
 
@@ -47,7 +48,34 @@ class _MainPage extends State<MainPage> {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bluetooth'),
+        //centerTitle: true,
+        title: Container(
+          padding: EdgeInsets.symmetric(horizontal: 5,),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Bluetooth',
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Scan(),
+                    ),
+                  ).then((value){
+                    setState((){
+
+                    });
+                  });
+                },
+                behavior: HitTestBehavior.translucent,
+                child: Icon(Icons.settings),
+              ),
+            ],
+          ),
+        ),
       ),
       body: pages[currentIndex],
       bottomNavigationBar: BottomNavigationBar(

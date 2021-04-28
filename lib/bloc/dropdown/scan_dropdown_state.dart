@@ -6,12 +6,10 @@ abstract class ScanDropdownState extends Equatable {
   List<Object> get props => [];
 }
 
-class ScanDropdownInitial extends ScanDropdownState {
-
-}
+class ScanDropdownInitial extends ScanDropdownState {}
 
 class ScanDropdownItem extends ScanDropdownState {
-  final ScanMode mode;
+  final int mode;
   ScanDropdownItem({this.mode});
 
   @override
