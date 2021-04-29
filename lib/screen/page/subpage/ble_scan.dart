@@ -79,7 +79,7 @@ class _Scan extends State<Scan> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Scan Setting',
+                '藍芽掃描設置',
                 style: TextStyle(
                   fontSize: 20,
                 ),
@@ -133,10 +133,26 @@ class _Scan extends State<Scan> {
         body: Container(
           padding: EdgeInsets.symmetric(horizontal: 20,),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(
+                height: 15,
+              ),
+              Text(
+                '1. 假如rssi欄位值是空白的話，將不會過濾rssi',
+              ),
+              SizedBox(
+                height: 15,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  Padding(
+                    padding: EdgeInsets.only(right: 20,),
+                    child: Text(
+                      '掃描模式',
+                    ),
+                  ),
                   BlocBuilder<ScanDropdownBloc, ScanDropdownState>(
                     builder: (context, state) {
                       String dropdownText;
