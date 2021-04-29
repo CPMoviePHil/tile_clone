@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tile_blue/bloc/dropdown_domains/domain_dropdown_bloc.dart';
 import 'package:tile_blue/setting/prefs.dart';
 import 'package:tile_blue/util/dialogs.dart';
 
@@ -20,6 +22,7 @@ class _Other extends State<Other> {
   TextEditingController backEndController = TextEditingController();
 
   DropdownButton chooseMenu ({
+    @required Bloc bloc,
     @required String hintText,
     @required List<String> options,
   }) {
@@ -50,6 +53,7 @@ class _Other extends State<Other> {
 
   @override
   Widget build(BuildContext context) {
+    final domainDropDownBloc = BlocProvider.of<DomainDropdownBloc>(context);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(
@@ -90,10 +94,6 @@ class _Other extends State<Other> {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [],
-              ),
-              Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -130,6 +130,33 @@ class _Other extends State<Other> {
                     child: Text(
                       '新增',
                     ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  BlocBuilder<DomainDropdownBloc, DomainDropdownState>(
+                    builder: (BuildContext context, DomainDropdownState state) {
+                      List<String> listOfItem = [];
+                      String hintText = '伺服器選擇';
+                      if (state is DomainDropdownInitial) {
+                        domainDropDownBloc.add(DomainDropdownInit());
+                        return CircularProgressIndicator();
+                      }
+                      if (state is DomainDropdownItem) {
+                        listOfItem = state.domains;
+                      }
+                      if (state is DomainDropdownChosen) {
+                        hintText = state.domain;
+                        listOfItem = state.domains;
+                      }
+                      return chooseMenu(
+                        bloc: domainDropDownBloc,
+                        hintText: hintText,
+                        options: listOfItem,
+                      );
+                    },
                   ),
                 ],
               ),
