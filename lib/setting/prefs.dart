@@ -37,6 +37,20 @@ class Prefs {
     return listOfDomains;
   }
 
+  String getDomain() {
+    if (preferences.getString('domain') != null) {
+      return preferences.getString('domain');
+    }
+    return '';
+  }
+
+  Future<bool> saveChosenDomain ({
+    String domain,
+  }) async {
+    bool result = await preferences.setString('domain', domain,);
+    return result;
+  }
+
   Future<String> saveScanSetting ({
     int mode,
     int maxRssi,

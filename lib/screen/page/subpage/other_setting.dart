@@ -20,9 +20,10 @@ class _Other extends State<Other> {
 
   FocusNode backEndFocusNode = FocusNode();
   TextEditingController backEndController = TextEditingController();
+  String chooseDomain;
 
   DropdownButton chooseMenu ({
-    @required Bloc bloc,
+    @required DomainDropdownBloc bloc,
     @required String hintText,
     @required List<String> options,
   }) {
@@ -35,7 +36,12 @@ class _Other extends State<Other> {
         );
       },).toList(),
       onChanged: (item) async {
-
+        chooseDomain = item;
+        bloc.add(
+          DomainDropdownChose(
+            domain: item,
+          ),
+        );
       },
     );
   }
@@ -76,6 +82,18 @@ class _Other extends State<Other> {
                   FocusScope.of(context).requestFocus(
                     FocusNode(),
                   );
+                  if (chooseDomain != null) {
+                    Prefs prefs = Prefs(preferences: await SharedPreferences.getInstance(),);
+                    bool result = await prefs.saveChosenDomain(domain: chooseDomain,);
+                    Dialogs.showMessageDialog(
+                      success: result,
+                      context: context,
+                      msg: result
+                          ? "新增成功"
+                          : "新增失敗",
+                    );
+                    Future.delayed(Duration(seconds: 2,), () => Navigator.of(context).pop(),);
+                  }
                 },
                 child: Text(
                   "確認",
@@ -92,9 +110,22 @@ class _Other extends State<Other> {
             horizontal: 20,
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(
+                height: 15,
+              ),
+              Text(
+                '1. 假如伺服器設置是空白的，請先用欄位新增後台伺服器網址',
+              ),
+              Text(
+                '2. 選擇伺服器後按確認完成設置',
+              ),
+              SizedBox(
+                height: 15,
+              ),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
@@ -125,6 +156,7 @@ class _Other extends State<Other> {
                               : "新增失敗",
                         );
                         Future.delayed(Duration(seconds: 2,), () => Navigator.of(context).pop(),);
+                        domainDropDownBloc.add(DomainDropdownInit());
                       }
                     },
                     child: Text(
@@ -136,6 +168,12 @@ class _Other extends State<Other> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  Padding(
+                    padding: EdgeInsets.only(right: 20,),
+                    child: Text(
+                      '後台伺服器網址',
+                    ),
+                  ),
                   BlocBuilder<DomainDropdownBloc, DomainDropdownState>(
                     builder: (BuildContext context, DomainDropdownState state) {
                       List<String> listOfItem = [];

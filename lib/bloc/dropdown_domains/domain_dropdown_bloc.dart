@@ -19,9 +19,16 @@ class DomainDropdownBloc extends Bloc<DomainDropdownEvent, DomainDropdownState> 
     if (event is DomainDropdownInit) {
       Prefs prefs = Prefs(preferences: await SharedPreferences.getInstance());
       List<String> listOfDomains = prefs.getBackEndDomains();
-      yield DomainDropdownItem(
-        domains: listOfDomains,
-      );
+      if (prefs.getDomain() == '') {
+        yield DomainDropdownItem(
+          domains: listOfDomains,
+        );
+      } else {
+        yield DomainDropdownChosen(
+          domain: prefs.getDomain(),
+          domains: listOfDomains,
+        );
+      }
     }
     if (event is DomainDropdownChose) {
       Prefs prefs = Prefs(preferences: await SharedPreferences.getInstance());

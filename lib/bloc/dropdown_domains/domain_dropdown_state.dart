@@ -14,6 +14,11 @@ class DomainDropdownItem extends DomainDropdownState {
   DomainDropdownItem({
     @required this.domains,
   });
+
+  @override
+  List<Object> get props => [
+    this.domains,
+  ];
 }
 
 class DomainDropdownChosen extends DomainDropdownState {
@@ -24,4 +29,10 @@ class DomainDropdownChosen extends DomainDropdownState {
     @required this.domain,
     @required this.domains,
   });
+
+  @override
+  List<Object> get props => [
+    this.domain,
+    this.domains,
+  ];
 }
