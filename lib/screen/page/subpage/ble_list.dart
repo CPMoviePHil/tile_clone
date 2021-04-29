@@ -88,69 +88,71 @@ class _BleList extends State<BleList> {
                 final BlueScanResult receivedResult = snapshot.data;
                 print(receivedResult.deviceID);
                 scanResults.add(receivedResult);
-                List<Widget> actions = [];
-                if (receivedResult.data.connectable) {
-                  actions.add(
-                    IconSlideAction(
-                      caption: '連線',
-                      color: Colors.blue,
-                      icon: Icons.archive,
-                      onTap: () => null,
-                    ),
-                  );
-                }
-                actions.add(
-                  IconSlideAction(
-                  caption: '登錄',
-                  color: Colors.black38,
-                  icon: Icons.add_sharp,
-                  onTap: () async {
-                    if (BlueScanSetting.serverDomain != null) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('登錄至資料庫'),
-                            content: Container(
-                              height: 100,
-                              width: 100,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.only(bottom: 5,),
-                                    /*width: 100,*/
-                                    child: Text('伺服器:${BlueScanSetting.serverDomain}',),
-                                  ),
-                                  Text('名稱:${receivedResult.deviceName}'),
-                                  Text('裝置mac:${receivedResult.deviceID}'),
-                                ],
-                              ),
-                            ),
-                            actions: [
-                              ElevatedButton(
-                                child: Text('確認'),
-                                onPressed: (){
 
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    } else {
-                      Dialogs.showMessageDialog(
-                        success: false,
-                        context: context,
-                        msg: '請先至設定設置伺服器網址',
-                      );
-                      Future.delayed(Duration(seconds: 2,), () => Navigator.of(context).pop(),);
-                    }
-                  },
-                ),);
                 return ListView.builder(
                   itemCount: scanResults.length,
                   itemBuilder: (BuildContext context, int index,) {
+                    List<Widget> actions = [];
+                    if (scanResults[index].data.connectable) {
+                      actions.add(
+                        IconSlideAction(
+                          caption: '連線',
+                          color: Colors.blue,
+                          icon: Icons.archive,
+                          onTap: () => null,
+                        ),
+                      );
+                    }
+                    actions.add(
+                      IconSlideAction(
+                        caption: '登錄',
+                        color: Colors.black38,
+                        icon: Icons.add_sharp,
+                        onTap: () async {
+                          if (BlueScanSetting.serverDomain != null) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('登錄至資料庫'),
+                                  content: Container(
+                                    height: 100,
+                                    width: 100,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.only(bottom: 5,),
+                                          /*width: 100,*/
+                                          child: Text('伺服器:${BlueScanSetting.serverDomain}',),
+                                        ),
+                                        Text('名稱:${receivedResult.deviceName}'),
+                                        Text('裝置mac:${receivedResult.deviceID}'),
+                                      ],
+                                    ),
+                                  ),
+                                  actions: [
+                                    ElevatedButton(
+                                      child: Text('確認'),
+                                      onPressed: (){
+
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          } else {
+                            Dialogs.showMessageDialog(
+                              success: false,
+                              context: context,
+                              msg: '請先至設定設置伺服器網址',
+                            );
+                            Future.delayed(Duration(seconds: 2,), () => Navigator.of(context).pop(),);
+                          }
+                        },
+                      ),
+                    );
                     return Slidable(
                       actionPane: SlidableDrawerActionPane(),
                       actionExtentRatio: 0.25,
