@@ -1,5 +1,5 @@
-import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:tile_blue/util/export.dart';
+import 'package:flutter_blue/flutter_blue.dart' as fBlue;
 
 class BlueScanSetting {
 
@@ -17,22 +17,22 @@ class BlueScanSetting {
     ScanModeItem(
       index: 0,
       scanModeText: '平衡',
-      mode: ScanMode.balanced,
+      mode: fBlue.ScanMode.balanced,
     ),
     ScanModeItem(
       index: 1,
       scanModeText: '低耗能',
-      mode: ScanMode.lowPower,
+      mode: fBlue.ScanMode.lowPower,
     ),
     ScanModeItem(
       index: 2,
       scanModeText: '延遲低',
-      mode: ScanMode.lowLatency,
+      mode: fBlue.ScanMode.lowLatency,
     ),
     ScanModeItem(
       index: 3,
       scanModeText: 'opportunistic',
-      mode: ScanMode.opportunistic,
+      mode: fBlue.ScanMode.opportunistic,
     ),
   ];
 
