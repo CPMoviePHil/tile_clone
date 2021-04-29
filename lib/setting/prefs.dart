@@ -99,23 +99,35 @@ class Prefs {
   }
 
   void getScanSetting() {
+
     if (preferences.getInt("scanMode") != null) {
       BlueScanSetting.mode = preferences.getInt(
         "scanMode",
       );
     }
+
     if (preferences.getInt("maxRssi") != null) {
       BlueScanSetting.maxRssi = preferences.getInt(
         "maxRssi",
       );
     }
+
     if (preferences.getInt("minRssi") != null) {
       BlueScanSetting.minRssi = preferences.getInt(
         "minRssi",
       );
     }
+
     if (preferences.getString("bleMac") != null && preferences.getString("bleMac") != '') {
-      BlueScanSetting.bleMac = preferences.getString("bleMac");
+      BlueScanSetting.bleMac = preferences.getString(
+        "bleMac",
+      );
+    }
+
+    if (preferences.getString('domain') != null) {
+      BlueScanSetting.serverDomain = preferences.getString(
+        'domain',
+      );
     }
   }
 

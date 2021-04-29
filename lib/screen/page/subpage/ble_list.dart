@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:tile_blue/setting/blue_scan_setting.dart';
 import 'package:tile_blue/util/bluetooth.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:tile_blue/util/dialogs.dart';
 
 class BleList extends StatefulWidget {
   @override
@@ -56,13 +57,21 @@ class _BleList extends State<BleList> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            height: 15,
-          ),
-          Text("1. rssi:${BlueScanSetting.minRssi??'無設定(預設)'} ~ ${BlueScanSetting.maxRssi??'無設定(預設)'}"),
-          Text("2. 藍芽掃描模式${(BlueScanSetting.mode==null?'(預設)':'')}:${BlueScanSetting.modes[BlueScanSetting.mode??2].scanModeText}"),
-          SizedBox(
-            height: 10,
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20,),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 15,
+                ),
+                Text("1. rssi:${BlueScanSetting.minRssi??'無設定(預設)'} ~ ${BlueScanSetting.maxRssi??'無設定(預設)'}"),
+                Text("2. 藍芽掃描模式${(BlueScanSetting.mode==null?'(預設)':'')}:${BlueScanSetting.modes[BlueScanSetting.mode??2].scanModeText}"),
+                SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
           ),
           Expanded(
             child: StreamBuilder<BlueScanResult>(
@@ -79,6 +88,66 @@ class _BleList extends State<BleList> {
                 final BlueScanResult receivedResult = snapshot.data;
                 print(receivedResult.deviceID);
                 scanResults.add(receivedResult);
+                List<Widget> actions = [];
+                if (receivedResult.data.connectable) {
+                  actions.add(
+                    IconSlideAction(
+                      caption: '連線',
+                      color: Colors.blue,
+                      icon: Icons.archive,
+                      onTap: () => null,
+                    ),
+                  );
+                }
+                actions.add(
+                  IconSlideAction(
+                  caption: '登錄',
+                  color: Colors.black38,
+                  icon: Icons.add_sharp,
+                  onTap: () async {
+                    if (BlueScanSetting.serverDomain != null) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('登錄至資料庫'),
+                            content: Container(
+                              height: 100,
+                              width: 100,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.only(bottom: 5,),
+                                    /*width: 100,*/
+                                    child: Text('伺服器:${BlueScanSetting.serverDomain}',),
+                                  ),
+                                  Text('名稱:${receivedResult.deviceName}'),
+                                  Text('裝置mac:${receivedResult.deviceID}'),
+                                ],
+                              ),
+                            ),
+                            actions: [
+                              ElevatedButton(
+                                child: Text('確認'),
+                                onPressed: (){
+
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
+                      Dialogs.showMessageDialog(
+                        success: false,
+                        context: context,
+                        msg: '請先至設定設置伺服器網址',
+                      );
+                      Future.delayed(Duration(seconds: 2,), () => Navigator.of(context).pop(),);
+                    }
+                  },
+                ),);
                 return ListView.builder(
                   itemCount: scanResults.length,
                   itemBuilder: (BuildContext context, int index,) {
@@ -87,160 +156,56 @@ class _BleList extends State<BleList> {
                       actionExtentRatio: 0.25,
                       child: Container(
                         color: Colors.white,
-                        child: ListTile(
-                          title: Text(
-                            '藍芽裝置',
-                          ),
-                          subtitle: Text(
-                            "${scanResults[index].deviceID}",
-                          ),
-                          trailing: Text(
-                            '${scanResults[index].rssi}',
-                          ),
-                        ),
-                      ),
-                      actions: <Widget>[
-                        IconSlideAction(
-                          caption: '設置',
-                          color: Colors.blue,
-                          icon: Icons.archive,
-                          onTap: () {
-
-                          },
-                        ),
-                        IconSlideAction(
-                          caption: '登錄',
-                          color: Colors.black38,
-                          icon: Icons.add_sharp,
-                          onTap: () async {
-                            await showDialog(
+                        child: InkWell(
+                          onLongPress: () async {
+                            showDialog(
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                    title: Text('登錄至資料庫'),
-                                    content: Container(
-                                      height: 100,
-                                      width: 100,
+                                  title: Text('裝置資訊'),
+                                  content: Container(
+                                    child: Expanded(
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text('${receivedResult.deviceID}'),
-                                          Container(
-                                            /*width: 100,*/
-                                            child: DropdownButton<String>(
-                                              hint: Text("後台選擇"),
-                                              items: <String>['巧冠幼稚園', 'xx輪胎', "高雄科技大學"].map((String value) {
-                                                return DropdownMenuItem<String>(
-                                                  value: value,
-                                                  child: Text("$value"),
-                                                );
-                                              }).toList(),
-                                              onChanged: (_) {},
-                                            ),
+                                          Text('名稱:${receivedResult.deviceName??''}'),
+                                          Text('Mac:${receivedResult.deviceID}'),
+                                          Text('Rssi:${receivedResult.rssi}'),
+                                          Text(
+                                            '資料:'
+                                                '${receivedResult.data.localName}\n'
+                                                '${receivedResult.data.serviceData}\n'
+                                                '${receivedResult.data.manufacturerData}\n'
+                                                '${receivedResult.data.serviceUuids}\n',
                                           ),
                                         ],
                                       ),
                                     ),
-                                    actions: [
-                                      ElevatedButton(
-                                        child: Text('確認'),
-                                        onPressed: (){
-
-                                        },
-                                      ),
-                                    ],
-                                  );
+                                  ),
+                                );
                               },
                             );
                           },
-                        ),
-                      ],
-                    );
-                    /*if (receivedResult.scanStatus) {
-                      return Slidable(
-                        actionPane: SlidableDrawerActionPane(),
-                        actionExtentRatio: 0.25,
-                        child: Container(
-                          color: Colors.white,
                           child: ListTile(
                             title: Text(
-                              '藍芽裝置',
+                              '裝置名稱: ${scanResults[index].deviceName==''?'unknown':'${scanResults[index].deviceName}'}',
                             ),
-                            subtitle: Text(
-                              "${receivedResult.deviceID}",
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "MAC: ${scanResults[index].deviceID}",
+                                ),
+                              ],
                             ),
                             trailing: Text(
-                              '${receivedResult.rssi}',
+                              'rssi: ${scanResults[index].rssi}',
                             ),
                           ),
                         ),
-                        actions: <Widget>[
-                          IconSlideAction(
-                            caption: '設置',
-                            color: Colors.blue,
-                            icon: Icons.archive,
-                            onTap: () {
-
-                            },
-                          ),
-                          IconSlideAction(
-                            caption: '登錄',
-                            color: Colors.black38,
-                            icon: Icons.add_sharp,
-                            onTap: () async {
-                              await showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text('登錄至資料庫'),
-                                      content: Container(
-                                        height: 100,
-                                        width: 100,
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text('${receivedResult.deviceID}'),
-                                            Container(
-                                              *//*width: 100,*//*
-                                              child: DropdownButton<String>(
-                                                hint: Text("後台選擇"),
-                                                items: <String>['巧冠幼稚園', 'xx輪胎', "高雄科技大學"].map((String value) {
-                                                  return DropdownMenuItem<String>(
-                                                    value: value,
-                                                    child: Text("$value"),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (_) {},
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      actions: [
-                                        ElevatedButton(
-                                          child: Text('確認'),
-                                          onPressed: (){
-
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  }
-                              );
-                            },
-                          ),
-                        ],
-                      );
-                    } else {
-                      return Container(
-                        padding: EdgeInsets.symmetric(vertical: 10.0),
-                        alignment: Alignment.center,
-                        child: Text(
-                          "搜尋中...",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      );
-                    }*/
+                      ),
+                      actions: actions,
+                    );
                   },
                 );
               },

@@ -85,6 +85,7 @@ class BlueTooth {
 
     flutterBlue.scanResults.listen((results) {
       for (fBlue.ScanResult result in results) {
+        print(result);
         if (!fBlueStack.contains(result.device.id.id)) {
           if (BlueScanSetting.maxRssi != null && BlueScanSetting.minRssi != null) {
             if (result.rssi > BlueScanSetting.minRssi && result.rssi < BlueScanSetting.maxRssi) {
@@ -95,7 +96,9 @@ class BlueTooth {
               fBlueController.sink.add(
                 BlueScanResult(
                   scanStatus: true,
+                  deviceName: result.device.name,
                   deviceID: result.device.id.id,
+                  data: result.advertisementData,
                   rssi: result.rssi,
                 ),
               );
@@ -106,7 +109,9 @@ class BlueTooth {
             fBlueController.sink.add(
               BlueScanResult(
                 scanStatus: true,
+                deviceName: result.device.name,
                 deviceID: result.device.id.id,
+                data: result.advertisementData,
                 rssi: result.rssi,
               ),
             );
@@ -129,12 +134,16 @@ class BlueTooth {
 class BlueScanResult {
   final bool scanStatus;
   final String deviceID;
+  final String deviceName;
+  final fBlue.AdvertisementData data;
   final String error;
   final int rssi;
 
   BlueScanResult({
     @required this.scanStatus,
     this.deviceID,
+    this.deviceName,
+    this.data,
     this.error,
     this.rssi,
   });

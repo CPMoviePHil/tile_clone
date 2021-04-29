@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tile_blue/bloc/dropdown_domains/domain_dropdown_bloc.dart';
+import 'package:tile_blue/setting/blue_scan_setting.dart';
 import 'package:tile_blue/setting/prefs.dart';
 import 'package:tile_blue/util/dialogs.dart';
 
@@ -89,10 +90,13 @@ class _Other extends State<Other> {
                       success: result,
                       context: context,
                       msg: result
-                          ? "新增成功"
-                          : "新增失敗",
+                          ? "設置成功"
+                          : "設置失敗",
                     );
                     Future.delayed(Duration(seconds: 2,), () => Navigator.of(context).pop(),);
+                    if (result) {
+                      BlueScanSetting.serverDomain = prefs.getDomain();
+                    }
                   }
                 },
                 child: Text(
