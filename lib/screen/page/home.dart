@@ -30,6 +30,13 @@ class _Home extends State<Home> {
       ),
     );
 
+    items.add(
+      qrCode(
+        icon: Icons.qr_code_outlined,
+        routes: 'routes',
+      ),
+    );
+
     FlutterBluetoothSerial.instance.state.then((state) {
       setState(() {
         _bluetoothState = state;
@@ -154,6 +161,58 @@ class _Home extends State<Home> {
               size: 30,
             ),
           )
+        ],
+      ),
+    );
+  }
+
+  Widget qrCode({
+    @required IconData icon,
+    @required String routes,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(25.0,),
+      ),
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Icon(
+            icon,
+            size: 50,
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20,),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () async {
+
+                  },
+                  child: Icon(
+                    Icons.camera_alt_outlined,
+                    size: 30,
+                  ),
+                ),
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () async {
+
+                  },
+                  child: Icon(
+                    Icons.create,
+                    size: 30,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
