@@ -4,13 +4,13 @@ abstract class ScanDropdownEvent extends Equatable {
   const ScanDropdownEvent();
   @override
   // TODO: implement props
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class ScanDropdownChose extends ScanDropdownEvent {
-  final int mode;
+  final int? mode;
   const ScanDropdownChose({this.mode});
   @override
   // TODO: implement props
-  List<Object> get props => [this.mode,];
+  List<Object?> get props => [this.mode,];
 }

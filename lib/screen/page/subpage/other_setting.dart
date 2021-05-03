@@ -21,12 +21,12 @@ class _Other extends State<Other> {
 
   FocusNode backEndFocusNode = FocusNode();
   TextEditingController backEndController = TextEditingController();
-  String chooseDomain;
+  String? chooseDomain;
 
   DropdownButton chooseMenu ({
-    @required DomainDropdownBloc bloc,
-    @required String hintText,
-    @required List<String> options,
+    required DomainDropdownBloc bloc,
+    required String hintText,
+    required List<String> options,
   }) {
     return DropdownButton(
       hint: Text("$hintText"),
@@ -85,7 +85,7 @@ class _Other extends State<Other> {
                   );
                   if (chooseDomain != null) {
                     Prefs prefs = Prefs(preferences: await SharedPreferences.getInstance(),);
-                    bool result = await prefs.saveChosenDomain(domain: chooseDomain,);
+                    bool result = await prefs.saveChosenDomain(domain: chooseDomain!,);
                     Dialogs.showMessageDialog(
                       success: result,
                       context: context,

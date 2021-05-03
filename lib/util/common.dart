@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue/flutter_blue.dart' as fBlue;
 
 class ScanModeItem {
@@ -7,9 +6,8 @@ class ScanModeItem {
   final fBlue.ScanMode mode;
 
   ScanModeItem({
-    @required this.index,
-    @required this.scanModeText,
-    @required this.mode,
+    required this.index,
+    required this.scanModeText,
+    required this.mode,
   });
-
 }

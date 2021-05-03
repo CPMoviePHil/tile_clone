@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter_blue: ^0.8.0
@@ -30,6 +30,8 @@ dependencies:
   equatable: ^2.0.0
   flutter_slidable: ^0.6.0
   shared_preferences: ^2.0.5
+  isar: ^0.4.0
+  isar_flutter_libs: 0.4.0
   flutter:
     sdk: flutter
 
@@ -39,6 +41,8 @@ dependencies:
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
+  isar_generator: 0.4.0
+  build_runner: any
   flutter_test:
     sdk: flutter
 

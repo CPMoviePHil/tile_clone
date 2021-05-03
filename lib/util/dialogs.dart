@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 
 class Dialogs {
 
-  static Timer timer;
+  static Timer? timer;
 
   static Future<void> showLoadingDialog({
-    BuildContext context,
-    GlobalKey key,
+    required BuildContext context,
+    GlobalKey? key,
     String loadingMsg = '請稍後...',
   }) async {
     return showDialog<void>(
@@ -48,9 +48,9 @@ class Dialogs {
   }
 
   static Future<void> showMessageDialog({
-    @required bool success,
-    @required BuildContext context,
-    @required String msg,
+    required bool success,
+    required BuildContext context,
+    required String msg,
   }) async {
     showDialog(
       barrierDismissible: false,

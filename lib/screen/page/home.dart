@@ -107,9 +107,9 @@ class _Home extends State<Home> {
   }
 
   Widget addBlue({
-    @required BuildContext context,
-    @required IconData icon,
-    @required String routes,
+    required BuildContext context,
+    required IconData icon,
+    required String routes,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -167,8 +167,8 @@ class _Home extends State<Home> {
   }
 
   Widget qrCode({
-    @required IconData icon,
-    @required String routes,
+    required IconData icon,
+    required String routes,
   }) {
     return Container(
       decoration: BoxDecoration(

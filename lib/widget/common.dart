@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 
 class BarItem {
-  final IconData icon;
-  final String itemText;
+  final IconData? icon;
+  final String? itemText;
 
   BarItem({
     this.icon,

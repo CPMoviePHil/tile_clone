@@ -12,7 +12,7 @@ class BleList extends StatefulWidget {
 
 class _BleList extends State<BleList> {
 
-  Stream scanDevices;
+  Stream<BlueScanResult>? scanDevices;
 
   List<BlueScanResult> scanResults = [];
 
@@ -75,17 +75,17 @@ class _BleList extends State<BleList> {
           ),
           Expanded(
             child: StreamBuilder<BlueScanResult>(
-              stream: scanDevices,
+              stream: scanDevices!,
               builder: (BuildContext context, AsyncSnapshot<BlueScanResult> snapshot) {
                 if (!snapshot.hasData) {
                   return Center(
                     child: CircularProgressIndicator(),
                   );
                 }
-                if (!snapshot.data.scanStatus) {
-                  print("scan error:${snapshot.data.error}");
+                if (!snapshot.data!.scanStatus) {
+                  print("scan error:${snapshot.data!.error}");
                 }
-                final BlueScanResult receivedResult = snapshot.data;
+                final BlueScanResult receivedResult = snapshot.data!;
                 print(receivedResult.deviceID);
                 scanResults.add(receivedResult);
 
@@ -170,7 +170,7 @@ class _BleList extends State<BleList> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text('名稱:${receivedResult.deviceName??''}'),
+                                          Text('名稱:${receivedResult.deviceName}'),
                                           Text('Mac:${receivedResult.deviceID}'),
                                           Text('Rssi:${receivedResult.rssi}'),
                                           Text(

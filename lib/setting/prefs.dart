@@ -8,17 +8,17 @@ class Prefs {
   final SharedPreferences preferences;
 
   Prefs({
-    this.preferences,
+    required this.preferences,
   });
 
   Future<bool> saveBackEndDomain({
-    String domain,
+    String? domain,
   }) async {
     List<String> listOfDomains = getBackEndDomains();
     if (listOfDomains.contains(domain)) {
       return false;
     } else {
-      listOfDomains.add(domain);
+      listOfDomains.add(domain!);
     }
     bool result = await preferences.setString(
       "listOfDomains",
@@ -31,7 +31,7 @@ class Prefs {
     List<String> listOfDomains = [];
     if (preferences.getString("listOfDomains") != null) {
       listOfDomains = json.decode(
-        preferences.getString("listOfDomains"),
+        preferences.getString("listOfDomains")!,
       ).cast<String>();
     }
     return listOfDomains;
@@ -39,23 +39,23 @@ class Prefs {
 
   String getDomain() {
     if (preferences.getString('domain') != null) {
-      return preferences.getString('domain');
+      return preferences.getString('domain')!;
     }
     return '';
   }
 
   Future<bool> saveChosenDomain ({
-    String domain,
+    required String domain,
   }) async {
     bool result = await preferences.setString('domain', domain,);
     return result;
   }
 
   Future<String> saveScanSetting ({
-    int mode,
-    int maxRssi,
-    int minRssi,
-    String bleMac,
+    int? mode,
+    int? maxRssi,
+    int? minRssi,
+    String? bleMac,
   }) async {
     String errorString = '';
 

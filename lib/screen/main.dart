@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tile_blue/screen/page/export.dart';
-import 'package:tile_blue/widget/export.dart';
 import 'package:tile_blue/screen/page/subpage/export.dart';
 
 class MainPage extends StatefulWidget {
@@ -20,20 +19,20 @@ class _MainPage extends State<MainPage> {
     Location(),
   ];
 
-  final List<BarItem> items = [
-    BarItem(
+  final List<BottomNavigationBarItem> items = [
+    barItem(
       icon: Icons.home_filled,
       itemText: "Home",
     ),
-    BarItem(
+    barItem(
       icon: Icons.add_location,
       itemText: "Location",
     ),
   ];
 
-  BottomNavigationBarItem barItem({
-    IconData icon,
-    String itemText,
+  static BottomNavigationBarItem barItem({
+    required IconData icon,
+    required String itemText,
   }) {
     return BottomNavigationBarItem(
       icon: Icon(
@@ -44,7 +43,7 @@ class _MainPage extends State<MainPage> {
   }
 
   Widget bottomSheetItem ({
-    String hintText,
+    required String hintText,
   }) {
     return GestureDetector(
       onTap: () {
@@ -91,7 +90,7 @@ class _MainPage extends State<MainPage> {
                 onTap: () async {
                   final String option1 = '藍芽搜尋設定';
                   final String option2 = '其他設定';
-                  String result = await showModalBottomSheet<String>(
+                  String result = (await showModalBottomSheet<String>(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
@@ -127,7 +126,7 @@ class _MainPage extends State<MainPage> {
                         ),
                       );
                     },
-                  );
+                  ))!;
                   if (result == option1) {
                     Navigator.push(
                       context,
@@ -167,13 +166,7 @@ class _MainPage extends State<MainPage> {
             currentIndex = currentPageIndex;
           });
         },
-        items: items
-            .map(
-              (e) => barItem(
-            icon: e.icon,
-            itemText: e.itemText,
-          ),
-        ).toList(),
+        items: items,
       ),
     );
   }

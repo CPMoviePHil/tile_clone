@@ -28,12 +28,12 @@ class _Scan extends State<Scan> {
   //final deviceMacController = TextEditingController();
 
   DropdownButton chooseMenu({
-    @required Bloc bloc,
-    @required String hintText,
-    @required List<ScanModeItem> options,
+    required Bloc bloc,
+    required String hintText,
+    required List<ScanModeItem> options,
   }) {
     return DropdownButton(
-      hint: Text("${hintText??''}"),
+      hint: Text("${hintText}"),
       items: options.map((value) {
         return DropdownMenuItem(
           value: value.scanModeText,
@@ -41,7 +41,7 @@ class _Scan extends State<Scan> {
         );
       },).toList(),
       onChanged: (item) async {
-        int itemIndex;
+        int itemIndex = 0;
         BlueScanSetting.modes.map((e) {
           if (e.scanModeText == item) {
             itemIndex = e.index;
@@ -155,16 +155,16 @@ class _Scan extends State<Scan> {
                   ),
                   BlocBuilder<ScanDropdownBloc, ScanDropdownState>(
                     builder: (context, state) {
-                      String dropdownText;
+                      String dropdownText = '';
                       if (state is ScanDropdownInitial) {
                         if (BlueScanSetting.mode == null) {
                           dropdownText = '掃描模式';
                         } else {
-                          dropdownText = BlueScanSetting.modes[BlueScanSetting.mode].scanModeText;
+                          dropdownText = BlueScanSetting.modes[BlueScanSetting.mode!].scanModeText;
                         }
                       }
                       if (state is ScanDropdownItem) {
-                        dropdownText = BlueScanSetting.modes[state.mode].scanModeText;
+                        dropdownText = BlueScanSetting.modes[state.mode!].scanModeText;
                       }
                       return chooseMenu(
                         bloc: scanDropdownBloc,

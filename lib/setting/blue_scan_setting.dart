@@ -7,11 +7,11 @@ class BlueScanSetting {
 
   factory BlueScanSetting() => _scanSetting;
 
-  static int mode;
-  static int maxRssi;
-  static int minRssi;
-  static String bleMac;
-  static String serverDomain;
+  static int? mode;
+  static int? maxRssi;
+  static int? minRssi;
+  static String? bleMac;
+  static String? serverDomain;
 
   static final List<ScanModeItem> modes = [
     ScanModeItem(
