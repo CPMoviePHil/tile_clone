@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tile_blue/setting/blue_scan_setting.dart';
@@ -16,14 +19,19 @@ class _BleList extends State<BleList> {
 
   List<BlueScanResult> scanResults = [];
 
-  BlueTooth blue = BlueTooth.instance;
+  BlueTooth blue = BlueTooth(
+    fBlueController: StreamController.broadcast(),
+    fBlueStack: [],
+  );
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
     blue.startScan();
     scanDevices = blue.fBlueStream;
+    scanDevices!.listen((event) => setState(() => scanResults.add(event)));
   }
 
   @override
@@ -74,35 +82,12 @@ class _BleList extends State<BleList> {
             ),
           ),
           Expanded(
-            child: StreamBuilder<BlueScanResult>(
-              stream: scanDevices!,
-              builder: (BuildContext context, AsyncSnapshot<BlueScanResult> snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                if (!snapshot.data!.scanStatus) {
-                  print("scan error:${snapshot.data!.error}");
-                }
-                final BlueScanResult receivedResult = snapshot.data!;
-                print(receivedResult.deviceID);
-                scanResults.add(receivedResult);
-
+            child: Builder(
+              builder: (BuildContext context) {
                 return ListView.builder(
                   itemCount: scanResults.length,
                   itemBuilder: (BuildContext context, int index,) {
                     List<Widget> actions = [];
-                    if (scanResults[index].data.connectable) {
-                      actions.add(
-                        IconSlideAction(
-                          caption: '連線',
-                          color: Colors.blue,
-                          icon: Icons.archive,
-                          onTap: () => null,
-                        ),
-                      );
-                    }
                     actions.add(
                       IconSlideAction(
                         caption: '登錄',
@@ -126,8 +111,8 @@ class _BleList extends State<BleList> {
                                           /*width: 100,*/
                                           child: Text('伺服器:${BlueScanSetting.serverDomain}',),
                                         ),
-                                        Text('名稱:${receivedResult.deviceName}'),
-                                        Text('裝置mac:${receivedResult.deviceID}'),
+                                        Text('名稱:${scanResults[index].deviceName}'),
+                                        Text('裝置mac:${scanResults[index].deviceID}'),
                                       ],
                                     ),
                                   ),
@@ -170,16 +155,8 @@ class _BleList extends State<BleList> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text('名稱:${receivedResult.deviceName}'),
-                                          Text('Mac:${receivedResult.deviceID}'),
-                                          Text('Rssi:${receivedResult.rssi}'),
-                                          Text(
-                                            '資料:'
-                                                '${receivedResult.data.localName}\n'
-                                                '${receivedResult.data.serviceData}\n'
-                                                '${receivedResult.data.manufacturerData}\n'
-                                                '${receivedResult.data.serviceUuids}\n',
-                                          ),
+                                          Text('名稱:${scanResults[index].deviceName}'),
+                                          Text('Mac:${scanResults[index].deviceID}'),
                                         ],
                                       ),
                                     ),
@@ -199,9 +176,6 @@ class _BleList extends State<BleList> {
                                   "MAC: ${scanResults[index].deviceID}",
                                 ),
                               ],
-                            ),
-                            trailing: Text(
-                              'rssi: ${scanResults[index].rssi}',
                             ),
                           ),
                         ),
