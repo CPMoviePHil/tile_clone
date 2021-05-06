@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,19 +18,15 @@ class _BleList extends State<BleList> {
 
   List<BlueScanResult> scanResults = [];
 
-  BlueTooth blue = BlueTooth(
-    fBlueController: StreamController.broadcast(),
-    fBlueStack: [],
-  );
+  BlueTooth blue = BlueTooth();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
     blue.startScan();
     scanDevices = blue.fBlueStream;
-    scanDevices!.listen((event) => setState(() => scanResults.add(event)));
+    //scanDevices!.listen((event) => setState(() => scanResults.add(event)));
   }
 
   @override
@@ -151,14 +146,13 @@ class _BleList extends State<BleList> {
                                 return AlertDialog(
                                   title: Text('裝置資訊'),
                                   content: Container(
-                                    child: Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text('名稱:${scanResults[index].deviceName}'),
-                                          Text('Mac:${scanResults[index].deviceID}'),
-                                        ],
-                                      ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text('名稱:${scanResults[index].deviceName}'),
+                                        Text('Mac:${scanResults[index].deviceID}'),
+                                        Text('data: ${scanResults[index].data}'),
+                                      ],
                                     ),
                                   ),
                                 );
